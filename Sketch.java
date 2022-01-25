@@ -33,6 +33,10 @@ public class Sketch extends PApplet {
 
   boolean blnIsCropPlanted = false;
   boolean blnIsCropGrown = false;
+  float fltPlantTimer = 70;
+
+  int intPlantCounter = 0;
+  boolean blnIsCounterOn = false;
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -93,7 +97,8 @@ public class Sketch extends PApplet {
       image(ImgFarmPlot, 25, 175, 300, 300);
     } else if (blnIsCropPlanted == true){
       image(ImgPlantedPlot, 25, 175, 300, 300);
-    } else if (blnIsCropGrown == true){
+    }
+    if (blnIsCropGrown == true){
       image(ImgGrownPlot, 25, 175, 300, 300);
     }
 
@@ -105,8 +110,6 @@ public class Sketch extends PApplet {
     } else {
       image(ImgFullBucket, fltPlayerX + 100, fltPlayerY + 170, 30, 30);
     }
-
-    System.out.println(fltPlayerX + " / " + fltPlayerY);
 
     if (blnUpClicked){
       if (fltPlayerY >= 30) {
@@ -138,7 +141,19 @@ public class Sketch extends PApplet {
         }
       }
     }
-    if (fltPlayerX <= 190 && blnIsBucketFull == true){
+
+    if (fltPlayerX <= 190 && blnIsBucketFull == true && blnIsCropGrown == true) {
+      fltPlantTimer = 70;
+      textSize(20);
+      text("Press F to Harvest Crops", 75, 170);
+      if (keyPressed){
+        if (key == 'f'){
+          blnIsCropGrown = false;
+          blnIsCropPlanted = false;
+          blnIsCounterOn = true;
+        }
+      }
+    } else if (fltPlayerX <= 190 && blnIsBucketFull == true){
       textSize(20);
       text("Press E to Plant Crops", 75, 170);
       if (keyPressed){
@@ -150,9 +165,33 @@ public class Sketch extends PApplet {
     }
 
     if (blnIsCropPlanted == true){
-
+      fltPlantTimer--;
+      System.out.println(fltPlantTimer);
+      if (fltPlantTimer <= 0){
+        blnIsCropPlanted = false;
+        blnIsCropGrown = true;
+      }
+    }
+    if (blnIsCropGrown == true && fltPlayerX <= 190){
+      fltPlantTimer = 70;
+      textSize(20);
+      text("Press F to Harvest Crops", 75, 170);
+      if (keyPressed){
+        if (key == 'f'){
+          blnIsCropGrown = false;
+          blnIsCropPlanted = false;
+          blnIsCounterOn = true;
+        }
+      }
     }
 
+    if (blnIsCounterOn == true){
+      intPlantCounter++;
+      blnIsCounterOn = false;
+    }
+
+    textSize(25);
+    text("Score: " + intPlantCounter, 780, 485);
 
   }
 
