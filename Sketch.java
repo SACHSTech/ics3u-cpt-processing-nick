@@ -18,8 +18,6 @@ public class Sketch extends PApplet {
   double dblCloud2X = -270;
   double dblCloud3X = -900;
 
-  float[] fltRainY = new float[10];
-
   boolean blnUpClicked = false;
   boolean blnDownClicked = false;
   boolean blnLeftClicked = false;
@@ -37,6 +35,16 @@ public class Sketch extends PApplet {
 
   int intPlantCounter = 0;
   boolean blnIsCounterOn = false;
+
+  float[] fltRainY = new float[30];
+  float fltRainTimer = 500;
+  boolean blnIsRaining = false;
+  float fltRainStop = 80;
+
+  int intGameCountdown = 1600;
+
+  boolean blnIsMenuOn = true;
+  boolean blnIsEndScreen = false;
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -76,67 +84,66 @@ public class Sketch extends PApplet {
 
     image(ImgCloud, (float) dblCloudX, 40, 200, 90);
     dblCloudX = dblCloudX + 1.75;
-    if (dblCloudX > 900){
+    if (dblCloudX > 900) {
       dblCloudX = -180;
     }
     image(ImgCloud, (float) dblCloud2X, 20, 250, 90);
     dblCloud2X = dblCloud2X + 1.2;
-    if (dblCloud2X > 900){
+    if (dblCloud2X > 900) {
       dblCloud2X = -270;
     }
     image(ImgCloud, (float) dblCloud3X, 60, 200, 80);
     dblCloud3X = dblCloud3X + 1.3;
-    if (dblCloud3X > 900){
+    if (dblCloud3X > 900) {
       dblCloud3X = -900;
     }
 
-    image(ImgGrass,0,150, 900, 600);
+    image(ImgGrass, 0, 150, 900, 600);
     image(ImgWater, 700, 240, 255, 150);
 
-    if (blnIsCropPlanted == false){
+    if (blnIsCropPlanted == false) {
       image(ImgFarmPlot, 25, 175, 300, 300);
-    } else if (blnIsCropPlanted == true){
+    } else if (blnIsCropPlanted == true) {
       image(ImgPlantedPlot, 25, 175, 300, 300);
     }
-    if (blnIsCropGrown == true){
+    if (blnIsCropGrown == true) {
       image(ImgGrownPlot, 25, 175, 300, 300);
     }
-
 
     image(ImgPlayer, fltPlayerX, fltPlayerY, 300, 300);
 
     if (blnIsBucketFull == false) {
-      image(ImgEmptyBucket, fltPlayerX + 100, fltPlayerY + 170, 30,30);
+      image(ImgEmptyBucket, fltPlayerX + 100, fltPlayerY + 170, 30, 30);
     } else {
       image(ImgFullBucket, fltPlayerX + 100, fltPlayerY + 170, 30, 30);
     }
 
-    if (blnUpClicked){
+    if (blnUpClicked) {
       if (fltPlayerY >= 30) {
         fltPlayerY = fltPlayerY - fltPlayerSpeed;
       }
     }
-    if (blnDownClicked){
+    if (blnDownClicked) {
       if (fltPlayerY <= 304) {
         fltPlayerY = fltPlayerY + fltPlayerSpeed;
       }
     }
-    if (blnLeftClicked){
+    if (blnLeftClicked) {
       if (fltPlayerX >= -112) {
         fltPlayerX = fltPlayerX - fltPlayerSpeed;
       }
     }
-    if (blnRightClicked){
-      if (fltPlayerX <= 736){
+    if (blnRightClicked) {
+      if (fltPlayerX <= 736) {
         fltPlayerX = fltPlayerX + fltPlayerSpeed;
       }
     }
 
-    if (fltPlayerX >= 505){
+    if (fltPlayerX >= 505) {
       textSize(20);
       text("Press E to get Water", 700, 200);
-      if (keyPressed){
-        if (key == 'e'){
+      if (keyPressed) {
+        if (key == 'e') {
           blnIsBucketFull = true;
         }
       }
@@ -146,14 +153,36 @@ public class Sketch extends PApplet {
       fltPlantTimer = 70;
       textSize(20);
       text("Press F to Harvest Crops", 75, 170);
-      if (keyPressed){
-        if (key == 'f'){
+      if (keyPressed) {
+        if (key == 'f') {
           blnIsCropGrown = false;
           blnIsCropPlanted = false;
           blnIsCounterOn = true;
         }
       }
-    } else if (fltPlayerX <= 190 && blnIsBucketFull == true){
+    } else if (fltPlayerX <= 200 && blnIsBucketFull == true && blnIsRaining == true) {
+      fltPlantTimer = 70;
+      textSize(20);
+      text("Press F to Harvest Crops", 75, 170);
+      if (keyPressed) {
+        if (key == 'f') {
+          blnIsCropGrown = false;
+          blnIsCropPlanted = false;
+          blnIsCounterOn = true;
+        }
+      }
+    } else if (fltPlayerX <= 200 && blnIsBucketFull && blnIsCropGrown){
+      fltPlantTimer = 70;
+      textSize(20);
+      text("Press F to Harvest Crops", 75, 170);
+      if (keyPressed) {
+        if (key == 'f') {
+          blnIsCropGrown = false;
+          blnIsCropPlanted = false;
+          blnIsCounterOn = true;
+        }
+      }
+    }else if (fltPlayerX <= 200 && blnIsBucketFull == true){
       textSize(20);
       text("Press E to Plant Crops", 75, 170);
       if (keyPressed){
@@ -166,13 +195,12 @@ public class Sketch extends PApplet {
 
     if (blnIsCropPlanted == true){
       fltPlantTimer--;
-      System.out.println(fltPlantTimer);
       if (fltPlantTimer <= 0){
         blnIsCropPlanted = false;
         blnIsCropGrown = true;
       }
     }
-    if (blnIsCropGrown == true && fltPlayerX <= 190){
+    if (blnIsCropGrown == true && fltPlayerX <= 200){
       fltPlantTimer = 70;
       textSize(20);
       text("Press F to Harvest Crops", 75, 170);
@@ -185,13 +213,55 @@ public class Sketch extends PApplet {
       }
     }
 
+    if (blnIsRaining == false){
+      fltRainStop = 80;
+      fltRainTimer--;
+    }
+    System.out.println(fltRainTimer);
+    if (fltRainTimer <= 0) {
+      blnIsRaining = true;
+    }
+
+    if (blnIsRaining == true){
+      for (int i = 0; i < fltRainY.length; i ++) {
+        float fltRainX = width * i / fltRainY.length;
+        image(ImgRain, fltRainX, fltRainY[i], 25, 25);
+
+        fltRainY[i] += 7;
+
+        if (fltRainY[i] > height) {
+          fltRainY[i] = -30;
+        }
+      }
+
+      blnIsCropGrown = true;
+
+      fltRainStop--;
+      if (fltRainStop <= 0){
+        blnIsRaining = false;
+        fltRainTimer = 500;
+      }
+    }
+
     if (blnIsCounterOn == true){
       intPlantCounter++;
       blnIsCounterOn = false;
     }
 
+    fill(0);
     textSize(25);
     text("Score: " + intPlantCounter, 780, 485);
+
+    textSize(25);
+    text("Time Left: " + intGameCountdown, 700, 40);
+
+    if (intGameCountdown <= 0){
+      blnIsEndScreen = true;
+    }
+
+    if (blnIsEndScreen){
+      
+    }
 
   }
 
