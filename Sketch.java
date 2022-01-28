@@ -2,6 +2,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Sketch extends PApplet {
+  PImage ImgControls;
   PImage ImgCloud;
   PImage ImgGrass;
   PImage ImgRain;
@@ -40,14 +41,11 @@ public class Sketch extends PApplet {
   boolean blnIsRaining = false;
   float fltRainStop = 80;
 
-  int intGameCountdown = 30; //Change
+  int intGameCountdown = 900;
 
   boolean blnIsMenuOn = true;
-
   boolean blnIsEndScreen = false;
-  int intGameCounter = 0;
   boolean blnCounterGoUp = false;
-  int[] intHighScores = new int[2500];
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -66,6 +64,7 @@ public class Sketch extends PApplet {
    */
   public void setup() {
     background(210, 255, 173);
+    ImgControls = loadImage("../assets/controls.jpg");
     ImgCloud = loadImage("../assets/cloud.png");
     ImgGrass = loadImage("../assets/grass.png");
     ImgRain = loadImage("../assets/rain.png");
@@ -83,6 +82,29 @@ public class Sketch extends PApplet {
    */
   public void draw() {
     if (blnIsMenuOn == true){
+      background(92, 163, 204);
+      fill(181, 169, 138);
+      stroke(0);
+      strokeWeight(8);
+      textSize(60);
+      rect(25, 25, 850, 450);
+      fill(0);
+      text("Water&Grow: Farming Game", 43, 100);
+      text("Play", 395, 220);
+      noFill();
+      stroke(0);
+      strokeWeight(8);
+      rect(300, 140, 300, 130);
+      image(ImgControls, 25,290, 840, 175);
+
+      if (mouseX >= 305 && mouseX <= 596 && mouseY >= 143 && mouseY <= 265){
+        if (mousePressed){
+          blnIsMenuOn = false;
+        }
+      }
+    }
+
+    if (blnIsMenuOn == false){
       background(92, 163, 204);
 
       image(ImgCloud, (float) dblCloudX, 40, 200, 90);
@@ -185,7 +207,7 @@ public class Sketch extends PApplet {
             blnIsCounterOn = true;
           }
         }
-      }else if (fltPlayerX <= 200 && blnIsBucketFull == true){
+      } else if (fltPlayerX <= 200 && blnIsBucketFull == true){
         textSize(20);
         text("Press E to Plant Crops", 75, 170);
         if (keyPressed){
@@ -218,7 +240,6 @@ public class Sketch extends PApplet {
 
       if (blnIsRaining == false){
         fltRainStop = 80;
-        fltRainTimer--;
       }
 
       if (fltRainTimer <= 0) {
@@ -250,11 +271,11 @@ public class Sketch extends PApplet {
         intScoreCounter++;
         blnIsCounterOn = false;
       }
-
+      
+      fltRainTimer--;
       fill(0);
       textSize(25);
       text("Score: " + intScoreCounter, 760, 485);
-
       intGameCountdown--;
       textSize(25);
       text("Time Left: " + intGameCountdown, 700, 40);
@@ -266,12 +287,8 @@ public class Sketch extends PApplet {
 
     if (blnIsEndScreen == true){
       background(92, 163, 204);
-
-      System.out.println(mouseX + " / " + mouseY);
-
       fill(181, 169, 138);
       rect(25, 25, 850, 450);
-
       blnCounterGoUp = true;
 
       fill(0);
@@ -286,17 +303,17 @@ public class Sketch extends PApplet {
 
       if (mouseX >= 121 && mouseX <= 807 && mouseY >= 199 && mouseY <= 318){
           if (mousePressed){
-            
+            fltRainTimer = 250;
+            intGameCountdown = 900;
+            float fltPlayerX = 380;
+            float fltPlayerY = 200;
+            blnIsBucketFull = false;
+            intScoreCounter = 0;
+            blnIsMenuOn = false;
             blnIsEndScreen = false;
           }
       }
     }
-
-    if (blnCounterGoUp == true){
-        intGameCounter++;
-        blnCounterGoUp = false;
-    }
-
   }
 
   public void keyPressed() {
